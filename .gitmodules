@@ -1,0 +1,9 @@
+[submodule "stepbystep/stepbystep/lib/forge-std"]
+	path = stepbystep/stepbystep/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "stepbystep/stepbystep/lib/openzeppelin-contracts"]
+	path = stepbystep/stepbystep/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "stepbystep/stepbystep/lib/solmate"]
+	path = stepbystep/stepbystep/lib/solmate
+	url = https://github.com/transmissions11/solmate
