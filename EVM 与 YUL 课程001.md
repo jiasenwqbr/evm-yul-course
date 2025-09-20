@@ -187,6 +187,173 @@ And then smart contract can use calldata load and calldata size and calldata  an
 
 ## 操作码和预编译
 
+视频 AI 总结： 本视频是 EVM 计划课程的第三集，主要讲解了 EVM（以太坊虚拟机）中的 Opcodes 和 Precompiles，它们是 EVM 交易的核心。视频首先解释了 Bytes 的概念，以及数字的不同表达方式（二进制、八进制、十六进制），以及大小端序。然后深入讲解了 Opcodes 的类型，包括停止、数学运算、环境信息、储存/记忆操作、Logs/Events 和系统操作，以及 Precompiles 的作用和一些常用的 Precompiles 合约。
+
+关键信息：
+
+- Bytes 的不同表达方式：二进制（0b）、八进制、十进制、十六进制（0x）。
+- 大小端序：小端序和大端序在书写 Bytes 方式上的不同。
+- EVM 支持的唯一类型是 32 Bytes。
+- Opcodes 是 EVM 的低级指令，用于构建智能合约。
+- Opcodes 的分类：停止、数学运算、环境信息、储存/记忆操作、Logs/Events、系统操作。
+- Precompiles 是预先编译好的智能合约，用于执行数据上昂贵的行动，提高效率。
+- 常用的 Precompiles 合约：ecrecover, sha256, ripemd160, identity, modexp, ecadd, ecmul, ecpairing, blake2f。
+- Logs 和 Events 实际上是同一个东西，在 Solidity 中叫 Event，在底层叫 Log。
+- Delegatecall 需要一个少于 call 的 gas，因为它并不需要密码价值。
+- Staticcall 就像一般的 call，但是它不允许任何储存改变。
+
+Welcome to the third episode of EVM programming course. In this episode we'll describe opcodes and precompiles which are core to the EVM transaction execution.But before digging into opcodes let's first deal with the bytes, shall we? So you probably know that everything in digital space is zero or one.This was picked because it was the easiest and most reliable way transferring data and has close resemblance to the machine and the transistor consisting of the processor. So either the current is flowing and we consider this as one or it's not flowing and we depict this as zero.Now we can encode all kind of information this way using stream of zeros and ones. For example if we chain together few other values we are getting you know some stream of bytes and we can actually treat it as a number and actually the same goes with decimal numbers. o let's take for example this number. So we are used to this notation and how it how it looks like but you probably never thought that we can actually depict this format a bit differently. 
+欢迎来到EVM编程课程的第三集。在这一集中，我们将介绍操作码（opcodes）和预编译合约（precompiles） 它们是EVM交易执行的核心。但在深入研究操作码之前，让我们先来了解一下字节（bytes），好吗？你可能知道，数字空间中的一切都是0或1。之所以选择这种方式，是因为它是最简单和最可靠的数据传输方式，并且与机器和构成处理器的晶体管非常相似。 因此，要么电流正在流动，我们将其视为1，要么没有流动我们将其表示为0。现在，我们可以对各种信息进行编码使用0和1的流来实现。例如，如果我们把几个其他的值链接在一起，我们就会得到一些字节流，实际上我们可以将其视为一个数字，实际上十进制数字也是如此。让我们以这个数字为例。我们习惯了这种表示法以及它的外观，但是你可能从未想过我们实际上可以描述这种格式有点不同。
+
+![image-20250919105521776](images/image-20250919105521776.png)
+
+It will still have the same meaning just that its representation will be a bit different.So actually what you can do is to represent the same number by splitting each of the digits in respective place. For example we have number three and we multiply it by 10 to the power of 0. 10 to the power of 0 is 1 so it will give us 3 and we add it to the second digit but this time 10 to the power of 1 which gives us 90. Next digit 4 we are multiplying it by 10 to the power of 2 which is 100 so we have 400 and so on and so forth. So we can describe this number also in this way.This is just a different notation and this is very useful because this is just a generalization of how we perceive the numbers. Having that what if for example we are not using the 10 as our base but we are using for example 2 as our base. 
+
+它仍然具有相同的含义，只是它的表示形式会有些不同。实际上，你可以通过拆分每个数字来表示相同的数字。例如，我们有数字3，然后将其乘以10的0次方。10的0次方是1，所以结果是3，然后我们将其加到第二位数字，这次是10的1次方，结果是90。下一位数字4，我们将其乘以10的2次方，也就是100，所以我们得到400，以此类推。因此，我们也可以用这种方式来描述这个数字。这只是一种不同的表示法，它非常有用，因为它只是我们感知数字方式的一种概括。有了这个，如果例如我们不使用10作为基数，而是我们使用例如2作为基数呢？
+
+So as you can see here the same goes for the binary. We can represent that the similar matter is here but we are not using 10 as our base but our base is 2 because in binary we have only 0 or 1 and this is how we can represent a stream of bytes as binary. So as you can see the same goes for different notations.
+
+正如你在这里看到的，二进制也是如此。我们可以用类似的方式来表示，但是我们不使用10作为我们的基数，而是使用2作为基数，因为在二进制中，我们只有0或1这就是我们如何用二进制表示字节流。正如你所看到的，不同的表示法也是如此。
+
+![image-20250919112352518](images/image-20250919112352518.png)
+
+So we have binary, we have our decimal, we have octal, we have hexadecimal and this is just a matter of expressing numbers in different ways.  One additional thing to add here is that you can see that if your base is bigger you need less characters to convey the same number and for example if we take this number from our example and put it into chisel we see that this is our chisel number but in hexadecimal representation that is this number. So this is the same number however represented just in different format and as you can also see the hexadecimal has this special 0x. So if you see this 0x that means that it is hexadecimal representation. 
+
+我们有十六进制，这只是用不同的方式表达数字的问题。这里要补充一点，你可以看到，如果你的基数越大，你需要更少的字符来传达相同的数字，例如，如果我们从示例中取出这个数字并将其放入中，我们看到这是我们的数字，但在十六进制表示中，就是这个数字。我们有二进制，我们有十进制，我们有八进制，所以这是相同的数字，只是以不同的格式表示正如你所看到的十六进制有这个特殊的0x前缀。所以如果你看到这个0x，那就意味着它是十六进制表示。
+
+![image-20250919113419842](images/image-20250919113419842.png)
+
+Apart from that the second really common denominator is binary which starts with 0b.In case of ethereum this representation is unsupported but normally you can encounter that when concerning binary and we will also be using that later. So yeah for example also we have cast which is super great tool. This is one of the three main tools of FORGE. This is not in scope of current course but you should definitely check that out if you haven't already. So as you can see we have the same number in different representation. We may also have octal representation. We can actually oh we cannot so they're like only the most common are supported but using this general formula we can encode any information you know having any basis that we want. Okay one more important thing to add here we have two ways of writing sequence of bytes and this is little indian and big indian and they different in the order in which they write bytes.
+除此之外，第二个非常常见的表示是二进制，它以0b开头。在以太坊中，这种表示是不支持的但通常在涉及二进制时，你可能会遇到它，我们稍后也会使用它。是的，例如，我们还有cast，这是一个非常棒的工具。这是FORGE的三个主要工具之一。这不在当前课程的范围内但如果你还没有查看过，你一定要去看看。正如你所看到的，我们用不同的表示形式表示相同的数字。我们也可以有八进制表示。我们实际上可以，哦，我们不能，所以他们好像只支持最常见的，但是使用这个通用公式，我们可以编码任何我们想要的任何基础的信息。好的，这里要补充一个更重要的事情我们有两种编写字节序列的方式，即小端（little endian）和大端（big endian） 它们在写入字节的顺序上有所不同。
+
+![image-20250919115835841](images/image-20250919115835841.png)
+
+So for example having this number it will be represented differently using little indian and big indian. So the same number will be depicted in the same way in big indian and its order will be swapped if we are talking about little indian. So in case of ethereum it's using big indian which in my personal opinion is way better to read and probably it was chosen because of that.And last thing before we move on it's I mentioned already multiple times that single word has 32 bytes and you also saw this in stack memory storage that this is basically the only type that EVM supports and the question is why this particular value was taken by EVM. So we can find the answer in yellow paper saying that the word size of the machine and the size of stat items is 256 bits which is 32 bytes. This was chosen to facilitate the kecak 256 hash scheme and elliptic curve computation.It also goes into explaining the memory model and stack model which we already discussed it will not go through it. 
+例如，对于这个数字，它将使用小端和大端表示时会有所不同。因此，相同的数字在大端中将以相同的方式表示，并且它的如果我们谈论小端，它的顺序将被交换。因此，在以太坊中，它使用大端，我个人认为这更容易阅读，可能就是因为这个原因而选择的。在我们继续之前，最后一件事是我已经多次提到，单个字（word）有32个字节，你也看到了在栈（stack）、内存（memory）、存储（storage）中，这基本上是EVM支持的唯一类型，问题是为什么EVM采用这个特定的值。我们可以在黄皮书中找到答案，它说机器的字大小和栈项目的大小是256位，也就是32字节。选择它是为了方便keccak256 哈希方案和椭圆曲线计算。它还解释了内存模型和栈模型，我们已经讨论过了，这里不再赘述。
+
+You can just see that it is here if you want to read it yourself. I also heard Vitalik Buterin in one of the interviews saying that they were looking for  a number that is big enough to fit all the use cases and small enough not to blow the storage with unused data.  如果你想自己阅读，你可以在这里看到它。我还听到Vitalik Buterin在一次采访中说，他们正在寻找一个足够大以适应所有用例，又足够小以至于不会用未使用的数据填满存储空间的数字。
+
+Okay having bytes already covered let's go through the opcodes. So the opcodes or operation codes are low-level instructions that the EVM understands and executes. They are building blocks of smart contracts. They're the same to the EVM that machine code being executed by the processor is to the to your computer and just like your computer only talks assembly code node running EVM code only use low-level opcodes. 
+好了，在介绍了字节之后，让我们来看看操作码。So you may ask why they are not called assembly. Well first of all they are not machine code that your hardware understands but rather are virtual machine code and second of all due to the decisions made when designing EVM some of the opcodes are performing multiple operations unlike normal assembly does. For example kecak opcode performs hundreds of atomic operations in order to hash array of bytes which is passed to it. So we have well-defined amount of opcodes which are supported by each EVM implementation and they have to be the same in all the implementation in order to make sure that everyone executes the same code hence has the same state because as I already discussed in first episode every node needs to reach the consensus on what is the current state and if some of the nodes were executing the smart code code in a different way that would lead to different storage and hence the world state would differ between these different implementation which would actually result in chain split because some nodes would think that this state is correct and the other state is incorrect and like the other part would say the otherwise. 
+
+操作码，或称操作代码，是EVM理解和执行的低级指令。它们是智能合约的构建块。它们对于EVM来说，就像机器代码被处理器执行对于你的电脑一样，就像你的电脑只使用汇编代码一样，运行EVM的节点代码只使用低级操作码。你可能会问，为什么它们不被称为汇编。首先，它们不是你的硬件所理解的机器代码，而是虚拟机代码，其次，由于在设计EVM时所做的决定，一些操作码正在执行多个操作，这与普通汇编不同。例如，keccak操作码执行数百个原子操作，以便对传递给它的字节数组进行哈希。因此，我们有明确定义的操作码数量每个EVM实现都支持，并且它们在所有实现中都必须相同，以确保每个人都执行相同的代码，因此具有相同的状态，因为正如我在第一集中已经讨论过的，每个节点都需要达成关于当前状态是什么的共识，并且如果某些节点以不同的方式执行智能合约代码，那将导致不同的存储，因此这些不同实现之间的世界状态将有所不同这实际上会导致链分裂，因为一些节点会认为这种状态是正确的，而另一种状态是不正确的，并且另一部分会说相反的话。
+
+Now let's discuss what types of opcodes we have. We're gonna use EVM yellow paper for that. So the opcodes start with the stop and arithmetic operations and this is really super important all arithmetic is modulo 2 to the power of 256. So EVM defines that in case that overflow or underflow occurs this is treated as modulo. So if you had like for example 2 to the power of 256 plus 1 it would be the same as you did the modulo of this. So this was wrap up again back to the 1 and this is less important but the zero power of zero to the power of zero is defined to be 1.Okay so first one is stop whenever the EVM executes code and sees this particular opcode it just stops executing no matter if there is any code after this stop it will just finish execution. 
+
+现在让我们讨论一下我们有哪些类型的操作码。我们将使用EVM黄皮书来实现这一点。操作码从stop开始，算术运算，这非常重要所有算术都是模2的256次方。EVM定义，如果发生溢出或下溢，则将其视为模。因此，如果你有例如2的256次方加1，它与你对此进行取模运算是相同的。因此，这将再次回到1，这不太重要，但是 0的0次方被定义为1。好的，第一个是stop，每当EVM执行代码并看到这个特定的操作码它就会停止执行，无论在此stop之后是否有任何代码，它都将完成执行。
+
+![image-20250919145351016](images/image-20250919145351016.png)
+
+### Stop
+
+| Since    | Group                          |
+| -------- | ------------------------------ |
+| Frontier | Stop and Arithmetic Operations |
+
+Notes
+
+Exits the current [context](https://www.evm.codes/about) successfully.
+
+When a call is executed on an address with no code and the EVM tries to read the code data, the default value is returned, 0, which corresponds to this instruction and halts the execution.
+
+当对一个没有代码的地址执行调用操作时，如果EVM尝试读取该地址的代码数据，则会返回默认值0，这对应着该指令，并导致执行流程终止。
+
+Next we have as you can see um arithmetical operations you can see this really strange notation. Unfortunately this is the language that yellow paper uses it uses very technical language and is not fun to read that's why we use the beige paper which is version of yellow beige paper paper that just strips down all of this very specific language and makes it easy for normal people to understand. So this format is a bit different and has some additional information in this case we have the gas cost connected to each of the opcode we have information how much stack elements it takes and how much stack elements it puts. So let's see that in this example we are pushing two elements and you can see that we have both of them on our stack and then we execute add and what we are left with is the result of the addition and we like the two elements from the stack disappeared and one new element appeared so this is what it means it takes two elements top elements from the stack and it outputs one new element then we have multiplication, subtraction, division which is well known by you and now this is interesting because we have different operations for division and line division. 
+
+接下来我们有，正如你所看到的算术运算，你可以看到这种非常奇怪的表示法。不幸的是，这是黄皮书使用的语言它使用了非常技术性的语言，读起来很枯燥，这就是我们使用 beige paper 的原因是黄皮书的一个版本它去掉了所有这些非常专业的语言，使普通人更容易理解。所以这种格式有点不同并且有一些额外的信息，在这种情况下，我们有与每个 opcode 相关的 gas 成本对于每个 opcode，我们有关于它占用多少堆栈元素以及它放置多少堆栈元素的信息。所以让我们看看，在这个例子中，我们正在压入两个元素，你可以看到我们把它们都放在了堆栈上，然后我们执行 add，结果是我们得到的是加法的结果，并且我们看到堆栈中的两个元素消失了，出现了一个新元素这意味着它从堆栈中取出两个顶部元素并输出一个新元素，然后我们有乘法、减法除法，这些你们都很熟悉了，现在这很有趣，因为我们有不同的除法和有符号除法操作。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
