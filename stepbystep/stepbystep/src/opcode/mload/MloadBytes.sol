@@ -65,3 +65,17 @@ contract MloadBytes {
     hex"1234567890" → 长度 5
     ⚠️ 你必须保证字符数是偶数，否则编译器会报错：
  */
+
+/**
+ * 
+ bytes constant A = hex"123456";
+ 
+ 等价于：
+
+ bytes memory data = new bytes(2);
+    data[0] = 0x12;
+    data[1] = 0x34;
+
+
+
+ */

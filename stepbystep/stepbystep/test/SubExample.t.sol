@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import "../src/sub/SubExample.sol";
+import "../src/opcode/sub/SubExample.sol";
 
 contract SubExampleTest is Test {
     SubExample subExample;
