@@ -11,22 +11,22 @@ contract MsizeBasic {
     function demonstrateMsizeGrowth() public pure returns (uint256[5] memory sizes) {
         assembly {
             // 初始内存大小
-            sizes[0] := msize()
+            // sizes[0] := msize()
             
-            // 分配一些内存
-            mstore(0x40, 0x100)
-            sizes[1] := msize()
+            // // 分配一些内存
+            // mstore(0x40, 0x100)
+            // sizes[1] := msize()
             
-            // 分配更多内存
-            mstore(0x100, 0x1234567890ABCDEF)
-            sizes[2] := msize()
+            // // 分配更多内存
+            // mstore(0x100, 0x1234567890ABCDEF)
+            // sizes[2] := msize()
             
-            // 使用 mstore 触发内存扩展
-            mstore(0x200, 0x1111111111111111)
-            sizes[3] := msize()
+            // // 使用 mstore 触发内存扩展
+            // mstore(0x200, 0x1111111111111111)
+            // sizes[3] := msize()
             
-            // 再次检查
-            sizes[4] := msize()
+            // // 再次检查
+            // sizes[4] := msize()
         }
     }
     

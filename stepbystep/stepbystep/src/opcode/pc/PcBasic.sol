@@ -5,7 +5,7 @@ contract PcBasic {
     function getProgramCounter() public pure returns (uint256 position) {
         assembly {
             // 获取当前程序计数器位置
-            position := pc()
+            // position := pc()
         }
     }
     
@@ -22,11 +22,11 @@ contract PcBasic {
     function demonstratePcBehavior() public pure returns (uint256[5] memory positions) {
         assembly {
             // 记录多个位置的 PC 值
-            positions[0] := pc()
-            positions[1] := pc()
-            positions[2] := pc()
-            positions[3] := pc()
-            positions[4] := pc()
+            // positions[0] := pc()
+            // positions[1] := pc()
+            // positions[2] := pc()
+            // positions[3] := pc()
+            // positions[4] := pc()
             
             // 所有这些值可能是相同的，因为PC返回的是自身位置
             // 实际值取决于编译器生成的字节码布局

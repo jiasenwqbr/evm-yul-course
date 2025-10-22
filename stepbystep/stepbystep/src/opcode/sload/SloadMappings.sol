@@ -31,14 +31,14 @@ contract SloadMappings {
         }
     }
     
-    function readAddressMapping(address addr) public view returns (uint256 balance) {
+    function readAddressMapping(address addr) public view returns (uint256 balance1) {
         assembly {
             // balances 在存储槽 1
             mstore(0x00, addr)
             mstore(0x20, 1) // 存储槽位置
             let balanceSlot := keccak256(0x00, 0x40)
             
-            balance := sload(balanceSlot)
+            balance1 := sload(balanceSlot)
         }
     }
     

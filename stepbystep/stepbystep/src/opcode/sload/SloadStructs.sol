@@ -5,14 +5,14 @@ contract SloadStructs {
     struct User {
         uint256 id;
         address wallet;
-        uint256 balance;
+        uint256 balance1;
         bool isActive;
     }
     
     User public currentUser = User({
         id: 1,
         wallet: 0x742d35Cc6634C0532925a3b8Dc23846f1cE8C7d3,
-        balance: 1000 ether,
+        balance1: 1000 ether,
         isActive: true
     });
     
@@ -38,7 +38,7 @@ contract SloadStructs {
             let wallet := and(walletSlot, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
             
             // 存储槽 2: balance
-            let balance := sload(2)
+            let balance1 := sload(2)
             
             // 存储槽 3: isActive (bool在最低字节)
             let isActiveSlot := sload(3)
@@ -46,7 +46,7 @@ contract SloadStructs {
             
             mstore(0x00, id)
             mstore(0x20, wallet)
-            mstore(0x40, balance)
+            mstore(0x40, balance1)
             mstore(0x60, isActive)
             return(0x00, 0x80)
         }
@@ -64,13 +64,13 @@ contract SloadStructs {
             let id := sload(userStart)           // id
             let walletSlot := sload(add(userStart, 1)) // wallet
             let wallet := and(walletSlot, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-            let balance := sload(add(userStart, 2))    // balance
+            let balance1 := sload(add(userStart, 2))    // balance
             let isActiveSlot := sload(add(userStart, 3)) // isActive
             let isActive := and(isActiveSlot, 0xFF)
             
             mstore(0x00, id)
             mstore(0x20, wallet)
-            mstore(0x40, balance)
+            mstore(0x40, balance1)
             mstore(0x60, isActive)
             return(0x00, 0x80)
         }

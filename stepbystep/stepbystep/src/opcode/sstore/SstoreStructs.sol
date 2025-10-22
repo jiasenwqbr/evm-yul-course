@@ -5,7 +5,7 @@ contract SstoreStructs {
     struct User {
         uint256 id;
         address wallet;
-        uint256 balance;
+        uint256 balance1;
         bool isActive;
     }
     
@@ -15,14 +15,14 @@ contract SstoreStructs {
     function storeUserStruct(
         uint256 id,
         address wallet,
-        uint256 balance,
+        uint256 balance1,
         bool isActive
     ) public {
         assembly {
             // 结构体字段连续存储
             sstore(0, id)                    // currentUser.id
             sstore(1, wallet)                // currentUser.wallet
-            sstore(2, balance)               // currentUser.balance
+            sstore(2, balance1)               // currentUser.balance
             sstore(3, isActive)              // currentUser.isActive
         }
     }
@@ -31,7 +31,7 @@ contract SstoreStructs {
         uint256 userId,
         uint256 id,
         address wallet, 
-        uint256 balance,
+        uint256 balance1,
         bool isActive
     ) public {
         assembly {
@@ -43,7 +43,7 @@ contract SstoreStructs {
             // 存储结构体字段
             sstore(userStart, id)                    // id
             sstore(add(userStart, 1), wallet)        // wallet
-            sstore(add(userStart, 2), balance)       // balance
+            sstore(add(userStart, 2), balance1)       // balance
             sstore(add(userStart, 3), isActive)      // isActive
         }
     }

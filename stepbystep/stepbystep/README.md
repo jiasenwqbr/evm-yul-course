@@ -343,3 +343,5 @@ forge test --gas-report --fuzz-runs 1000
 forge test --fuzz-runs 10000 --timeout 60000
 ```
 forge test --gas-report --match-contract "AssemblyStep0" -vvvvv
+
+forge test --gas-report --match-contract "TLoadExample" -vvvvv

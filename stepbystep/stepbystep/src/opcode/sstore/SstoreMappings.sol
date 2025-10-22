@@ -17,14 +17,14 @@ contract SstoreMappings {
         }
     }
     
-    function storeAddressMapping(address user, uint256 balance) public {
+    function storeAddressMapping(address user, uint256 balance1) public {
         assembly {
             // balances 在存储槽 1
             mstore(0x00, user)
             mstore(0x20, 1) // 存储槽位置
             let balanceSlot := keccak256(0x00, 0x40)
             
-            sstore(balanceSlot, balance)
+            sstore(balanceSlot, balance1)
         }
     }
     
@@ -38,7 +38,7 @@ contract SstoreMappings {
             for { let i := 0 } lt(i, users.length) { i := add(i, 1) } {
                 // 获取用户地址和余额
                 let user := calldataload(add(users.offset, mul(i, 0x20)))
-                let balance := calldataload(add(newBalances.offset, mul(i, 0x20)))
+                let balance1 := calldataload(add(newBalances.offset, mul(i, 0x20)))
                 
                 // 计算存储位置
                 mstore(0x00, user)
@@ -46,7 +46,7 @@ contract SstoreMappings {
                 let slot := keccak256(0x00, 0x40)
                 
                 // 更新余额
-                sstore(slot, balance)
+                sstore(slot, balance1)
             }
         }
     }
