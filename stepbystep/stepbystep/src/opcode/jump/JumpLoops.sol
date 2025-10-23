@@ -1,5 +1,5 @@
 // // SPDX-License-Identifier: UNLICENSED
-// pragma solidity ^0.8.13;
+pragma solidity ^0.8.13;
 
 // contract JumpLoops {
 //     function simpleLoop(uint256 n) public pure returns (uint256 sum) {

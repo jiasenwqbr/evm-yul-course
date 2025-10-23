@@ -11,11 +11,11 @@ contract PcBasic {
     
     function multiplePc() public pure returns (uint256 pos1, uint256 pos2, uint256 pos3) {
         assembly {
-            pos1 := pc()  // 第一个 PC 的位置
-            pop(pc())     // 第二个 PC 的位置（弹出不用）
-            pos2 := pc()  // 第三个 PC 的位置
-            mstore(0x00, pc()) // 第四个 PC 的位置
-            pos3 := mload(0x00)
+            // pos1 := pc()  // 第一个 PC 的位置
+            // pop(pc())     // 第二个 PC 的位置（弹出不用）
+            // pos2 := pc()  // 第三个 PC 的位置
+            // mstore(0x00, pc()) // 第四个 PC 的位置
+            // pos3 := mload(0x00)
         }
     }
     

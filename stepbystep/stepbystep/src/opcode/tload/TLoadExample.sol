@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.13;
 
 
 contract TLoadExample {
     // 定义一个瞬时存储的键，通常使用 keccak256 hash 来避免冲突
-    bytes32 private constant EXPENSIVE_VALUE_KEY = keccak256("myapp.expensive_value");
+   // bytes32 private constant EXPENSIVE_VALUE_KEY = keccak256("myapp.expensive_value");
+    uint256 private constant EXPENSIVE_VALUE_KEY = 0x1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF;
 
     // 一个模拟的昂贵计算函数
     function expensiveComputation(uint256 input) public pure returns (uint256) {
