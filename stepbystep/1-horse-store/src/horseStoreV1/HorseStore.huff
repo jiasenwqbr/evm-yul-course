@@ -5,5 +5,14 @@
     push2 0x0123
     push3 0x012345
 
+    updateJump
+    jumpi
+
+
+    updateJump:
+        SET_NUMBER_OF_HORSES()
+
 }
+
+#define macro SET_NUMBER_OF_HORSES() = takes(0) returns(0){}
 
