@@ -64,3 +64,11 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+```
+ forge script script/Deploy.s.sol:DeployScript  --rpc-url ganache --broadcast --verify -vvv --private-key 0x4c5856cd318638588b74699abec87d4257815b82fd03407bdae246da4795b754
+
+forge script script/Deploy.s.sol:DeployScript  --fork-url http://localhost:8545 
+
+
+```
